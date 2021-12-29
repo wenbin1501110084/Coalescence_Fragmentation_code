@@ -2,12 +2,12 @@ C********************************************************************C
 C                                                                    ! 
 C     Originally Written by K. C. Han, R. J. Fries, and C.-M. Ko     C 
 C     Greatly improved by Wenbin Zhao, 1501110084@pku.edu.cn         !
-C 
-C     When you use this coalescence code, please cite these 
-C      three papers:
-C       W.~Zhao, etc. al.[arXiv:2103.14657 [hep-ph]].                                               
-C       W.~Zhao,etc.al.Phys. Rev. Lett.125, (2020) no.7, 072301.
-C       K. C. Han, R. J. Fries and C. M. Ko, Phys. Rev. C93,no. 4, 045207 (2016).
+C     When you use this coalescence code, please cite these          C
+C      three papers:                                                 !
+C       W.~Zhao, etc. al.[arXiv:2103.14657 [hep-ph]].                C
+C       W.~Zhao,etc.al.Phys. Rev. Lett.125, (2020) no.7, 072301.     !
+C       K. C. Han, R. J. Fries and C. M. Ko,                         C
+C                           Phys. Rev. C93,no. 4, 045207 (2016).     !
 C====================================================================C
 C     Recombination + Remnant Fragmentatoin Module                   ! 
 C     Input:                                                         C 
@@ -28,7 +28,7 @@ C********************************************************************!
 !     .     nf,idf,xf,pf,Kst)!changed by wenbin 
       SUBROUTINE hadronization(nth,idth,xth,pth,nsh,idsh,xsh,psh,
      .     nf,idf,xf,pf,Kst,Npt,Kpx,Ppx,Xpx,
-     .    NCTnr, NCTKr,CTPr,CTXr,QQscale,qfscale) !added by wenbin for outputing remnant jet partons  ! NCTnr,NCTKr, CTPr, CTXr the information of coalesced thermal partons Wenbin
+     .    NCTnr, NCTKr,CTPr,CTXr,QQscale,qfscale) 
  
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       common/const/pi,hbarc
@@ -45,24 +45,14 @@ C********************************************************************!
       DIMENSION KfH(5000),PfH(5000,5),XfH(5000,5)
       DIMENSION Kr(5000,5),Pr(5000,5),Xr(5000,5)
       dimension Kpx(5000), Ppx(5000,5),Xpx(5000,5)
-      dimension NCTKr(5000), CTPr(5000,4), CTXr(5000,4) !coalesced thermal partons !zdded by wenbin
-
-      
-!     open (unit=88, file='input.txt', status='unknown')
-!.....Read input parameters .......
-!     READ(88,*) sigma
-!      READ(88,*) sigmaK
-!     READ(88,*) sigmapro
-!     READ(88,*) maxf
-      
+      dimension NCTKr(5000), CTPr(5000,4), CTXr(5000,4) 
       numpt = 0
-
 C......Thermal Partons .....................
       DO ith=1, nth
          numpt = numpt + 1
          Kp(numpt,2) = idth(ith) ! parton id
-         Kp(numpt,1) = 0        ! thermal
-         Kp(numpt,3) = 0        ! origin 
+         Kp(numpt,1) = 0         ! thermal
+         Kp(numpt,3) = 0         ! origin 
          P(numpt,1) = pth(ith,1)
          P(numpt,2) = pth(ith,2)
          P(numpt,3) = pth(ith,3)
@@ -78,8 +68,8 @@ C......Shower Partons .....................
       DO ish=1, nsh
          numpt = numpt + 1
          Kp(numpt,2) = idsh(ish) ! parton id                  
-         Kp(numpt,1) = 1        ! shower
-         Kp(numpt,3) = 0        ! origin                     
+         Kp(numpt,1) = 1         ! shower
+         Kp(numpt,3) = 0         ! origin                     
          P(numpt,1) = psh(ish,1)
          P(numpt,2) = psh(ish,2)
          P(numpt,3) = psh(ish,3)
@@ -95,9 +85,6 @@ C.......total number of thermal and shower partons .....
       numtot = nth+nsh
       call recomb(numtot,Kp,P,XV,nH,KH,PH,XH,nr,Kr,Pr,Xr,
      .              NCTnr,NCTKr,CTPr,CTXr,qscale,rqscale)
-
-      !write(*,*)"dddddd",NCTnr,numtot
-      !write(*,*)"CTsPr=",CTPr(NCTnr,1)
       nf = 0
 C.....the number of recombined hadrons ..............
       do ireco=1, nH
@@ -116,37 +103,10 @@ C.....the number of recombined hadrons ..............
          xf(nf,4) = XH(ireco,4)
       enddo
 
-!*************test for remnant partons *****************         
-!      do irem=1, nr
-!     if(IEV.eq.6328) print*, kev,Kr(irem,2),Kr(irem,1)
-!         print*, irem,Kr(irem,2),Pr(irem,1)
-!      enddo
-       !write(*,*)"222222",nr 
       call remorg(nr,Kr,Pr,Xr,Npt,Kpx,Ppx,Xpx,rqscale,
      .            qfscale)
        do i=1,10
-         !write(*,*)"3333 ",Ppx(i,2)
        enddo
-        !write(*,*)"3333",Npt 
-C.......fragmentation of remnant partons ..............
-!      call strfrag(Npt,Kpx,Ppx,Xpx,NfH,KfH,PfH,XfH)
-
-!      do irf=1, NfH
-!         nf = nf + 1
-!         idf(nf) = KfH(irf)
-!         Kst(nf) = 3            !fragment(3)
-!         
-!         pf(nf,1) = PfH(irf,1)
-!         pf(nf,2) = PfH(irf,2)
-!         pf(nf,3) = PfH(irf,3)
-!         pf(nf,4) = PfH(irf,4)
-!         xf(nf,1) = XfH(irf,1)
-!         xf(nf,2) = XfH(irf,2)
-!         xf(nf,3) = XfH(irf,3)
-!         xf(nf,4) = XfH(irf,4)
-!C..         print*, "str", xf(nf,4)
-!      enddo
-      
       RETURN
       END
 
@@ -192,13 +152,13 @@ C*****************************************************!
       dimension nchg(5000),qscale(5000),Q0(5000)
       dimension xmdx(4), pMx(3), pdx(4,4)
       dimension xmTx(4), pTx(3), pdBx(4,4)
-      dimension NCTKr(5000), CTPr(5000,4), CTXr(5000,4) !coalesced thermal partons !zdded by wenbin 
+      dimension NCTKr(5000), CTPr(5000,4), CTXr(5000,4) 
       dimension rqscale(5000)
 C..... Constants ................
       pi = 3.1415926535897932384626433832795
       hbarc = 0.197327          ! [ GeV*fm ]  
       hbarc2 = hbarc*hbarc
-      gmax = 1.50               ! MMMMMMMMMMMMMMMMMMM[GeV] maximum mass of gluon ************* 
+      gmax = 1.50               ! [GeV] maximum mass of gluon ************* 
 
 !*****widths for recombination ****************** 
       Del = hbarc/sigma
@@ -208,26 +168,17 @@ C..... Constants ................
       SigK2 = sigmaK*sigmaK
       SigN2 = sigmapro*sigmapro
       SigRB = 0.88
-      sigmaphi=0.65 !added by wenbin 2018.11.23
-      Sigphi2 = sigmaphi*sigmaphi!added by wenbin 2018.11.23
+      sigmaphi=0.65 
+      Sigphi2 = sigmaphi*sigmaphi
       SigRB2 = SigRB*SigRB
       SigLB = sqrt(3.)*SigRB/2.
       SigLB2 = SigLB*SigLB
-      SigRO = 1.20!sigma of Omega !added by wenbin 2018.11.23
-      SigRO2 =SigRO*SigRO         !added by wenbin 2018.11.23
-      SigLBO = sqrt(3.)*SigRO2/2. !added by wenbin 2018.11.23
-      SigLBO2 = SigLBO*SigLBO     !added by wenbin 2018.11.23
+      SigRO = 1.20!sigma of Omega 
+      SigRO2 =SigRO*SigRO        
+      SigLBO = sqrt(3.)*SigRO2/2.
+      SigLBO2 = SigLBO*SigLBO    
 
-!     read*,delx 
-!**** alpha = 2*delta2/Sig2=1. ******* 
-!      delx = sigma/sqrt(2.)
-!      delB = sigmapro/sqrt(2.)
-
-C...... Degeneracies ..............
-!      degen1 = 1./4.
-!      degenB = 1./4.
-
-!**** masses of u,d and s quarks **************************
+!**** masses of u,d and s quarks (for AMPT) **************************
       xmq = 0.008
       xmq2 = xmq*xmq
       xms = 0.199                   !mass_s=0.475 changed by wenbin 2018.11.23
@@ -253,12 +204,8 @@ C....Initialize number of quarks, number of hadrons, number of remnants
       nH = 0
       nr = 0      
       NCTnr=0
-      pttcutsquare=1.5*1.5!ttttttttttt
+      pttcutsquare=1.5*1.5 ! The pt cut for thermal partons
 
-!      pt_low_cut_th=1.600 !!CCC pt cut of the gluon splits quark  !added by wenbin 2019.03.09
-!      pt_low_cut_lbt=2.0000 !!CCC pt cut of the gluon splits quark  !added by wenbin 2019.03.09
-!      pt_low_th=pt_low_cut_th*pt_low_cut_th                !added by wenbin 2019.03.09
-!      pt_low_lbt=pt_low_cut_lbt*pt_low_cut_lbt                !added by wenbin 2019.03.09
 !**** Let's recombine quarks to get pions ********
 !*******************************************************!                       
 !     Gluon Decays into q qbar:  gluon -> q qbar      !                       
@@ -270,7 +217,7 @@ C....Initialize number of quarks, number of hadrons, number of remnants
             numq = numq + 1
             Kq(numq,1) = Kp(ipt,1) ! thermal or shower ******** 
             Kq(numq,2) = Kp(ipt,2) ! id 
-            Kq(numq,3) = 0      !*** origin .... 0 for leading quark... 
+            Kq(numq,3) = 0         !*** origin .... 0 for leading quark... 
             
             Pq(numq,1) = Pp(ipt,1) 
             Pq(numq,2) = Pp(ipt,2)
@@ -284,9 +231,7 @@ C....Initialize number of quarks, number of hadrons, number of remnants
 !******gluons ***********************************                               
          else
             if(Kp(ipt,2).eq.21) then
-               xmgx = 2.*xms + (gmax - 2.*xms)*ran() ! virtualities of gluons *\!the mass of gluon set to 0.6 GeV changed by wenbin 2018.11.22
-!*     *                                                                            
-!               xmgx = 0.6 !the mass of gluon set to 0.6 GeV changed by wenbin 2018.11.22
+               xmgx = 2.*xms + (gmax - 2.*xms)*ran() ! virtualities of gluons 
                xgpx = Pp(ipt,1)
                xgpy = Pp(ipt,2)
                xgpz = Pp(ipt,3)
@@ -299,13 +244,6 @@ C....Initialize number of quarks, number of hadrons, number of remnants
                call gluondec(xmgx,xgx,xgy,xgz,xgt,xgpx,xgpy,xgpz,xgnx,
      .              xgny,xgnz,xgnt,nflq1,qpx1,qpy1,qpz1,qe1,nflq2,
      .              qpx2,qpy2,qpz2,qe2)
-!               call gluondec111(xmgx,xgx,xgy,xgz,xgt,xgpx,xgpy,xgpz,
-!     .          xgnx,xgny,xgnz,xgnt,nflq1,qpx1,qpy1,qpz1,qe1,nflq2,
-!     .              qpx2,qpy2,qpz2,qe2,xmq,xms) !changed by wenbin 2018.12.11
-!               if(Kp(ipt,1).eq.0)ptcut=pt_low_th
-!               if(Kp(ipt,1).eq.1)ptcut=pt_low_lbt
-!               pt1_square=qpx1*qpx1+qpy1*qpy1 !added by wenbin 2019.03.09
-!               if(pt1_square.ge. ptcut)then  !added by wenbin 2019.03.09
                   numq = numq + 1
                   Kq(numq,1) = Kp(ipt,1) !*** thermal or shower *****              
                   Kq(numq,2) = nflq1
@@ -320,7 +258,6 @@ C....Initialize number of quarks, number of hadrons, number of remnants
                   Xq(numq,3) = xgnz
                   Xq(numq,4) = xgnt
                   Q0(numq)   = qscale(ipt) 
-!           total_parton_energy=total_parton_energy+Pq(numq,4)
 
                   numq = numq + 1
                   Kq(numq,1) = Kp(ipt,1) !*** thermal or shower *****              
@@ -336,8 +273,6 @@ C....Initialize number of quarks, number of hadrons, number of remnants
                   Xq(numq,3) = xgnz
                   Xq(numq,4) = xgnt
                   Q0(numq)   = qscale(ipt)
-!               endif !added by wenbin 2019.03.09
-!           total_parton_energy=total_parton_energy+Pq(numq,4)
 
             endif
          endif
@@ -563,13 +498,6 @@ C..   print*, tBL
                   if((urhox+urhoy+urhoz).gt. cccut)goto 50!added by wenbin
                   if((ulambx+ulambx+ulambx).gt. cccut)goto 50!added by wenbin
 
-!                  urhox = 0.5*(xr1x**2./SigRB2+(xk1x**2.)*SigRB2/hbarc2)
-!                  urhoy = 0.5*(xr1y**2./SigRB2+(xk1y**2.)*SigRB2/hbarc2)
-!                  urhoz = 0.5*(xr1z**2./SigRB2+(xk1z**2.)*SigRB2/hbarc2)
-!                  
-!                  ulambx=0.5*(xr2x**2./SigLB2+(xk2x**2.)*SigLB2/hbarc2)
-!                  ulamby=0.5*(xr2y**2./SigLB2+(xk2y**2.)*SigLB2/hbarc2)
-!                  ulambz=0.5*(xr2z**2./SigLB2+(xk2z**2.)*SigLB2/hbarc2)
 !********* include the Omega's sigma !end added by wenbin 2018.11.23 *******
                   
                   sumWigB = 0.
