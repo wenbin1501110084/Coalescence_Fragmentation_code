@@ -38,7 +38,7 @@ Move the remnant_jet_parton.dat from Coal to the to_frag2_with_thth. Then run:
         ./tofrag
 It will return the file jet_parton1.dat that for the string fragmentation.
 
-cp -r main2000.cc TO/PYTHIA/EXAMPLE/FILE
+cp -r main_string_fragmentation.cc TO/PYTHIA/EXAMPLE/FILE/main2000.cc
 cd TO/PYTHIA/EXAMPLE/FILE
 First compile the pythia8 fragmentation code, main2000.cc by:
         make main2000
