@@ -10,31 +10,41 @@
 #include "Pythia8/Pythia.h" 
 #define PI 3.1415926
 #define QQ0 1.0
-
 //*****************************
 //  The Pythia 8 string fragmentation
 //  copywrite Wenbin Zhao, 2020, 12.24
-//  When you use this code, please cite our papers:
-//      W.~Zhao, etc. al.[arXiv:2103.14657 [hep-ph]].                                               
-//      W.~Zhao,etc.al.Phys. Rev. Lett.125, (2020) no.7, 072301.
 //*****************************
 using namespace Pythia8;
 int searchmin(double*p, int *q,int*s,int len);
 int searchmax(double*p, int *q,int len);
 int searchmin2(double*p,int len);
+// original vector 
+//vector<int> oldArray;
+//// re-ordered vector
+//vector<int> newArray;
 
 char infiles[128];
 
 //===========================================================================================
 int main(int argv, char* argc[])
 {
+
+//  if (argv != 2)
+//  {
+//  	cout << "Wrong number of parameters!" << endl;
+//  	return -1;
+//  }
+  //stringstream random_ss;
   string random_str = string(argc[1]);
+//  int nrun = atoi(argc[1]);
   int n_event=atoi(argc[1]);
+  //random_ss << argc[1];
+  //random_ss >> random_str;
 string path=string(argc[2]);
 string path2=string(argc[3]);
 
   string output_filename2;
-  output_filename2 = path+"hadrons_frag1.dat";// output files of final hadrons
+  output_filename2 = path+"hadrons_frag1.dat";// oooooooooooooutput files of final hadrons
   cout << output_filename2 << endl;
   string ramdomseed_str = "Random:seed = "+random_str;
 
@@ -49,9 +59,10 @@ string path2=string(argc[3]);
   }
 //------- parton input -----------------
   string ipput_filename2;
-  ipput_filename2 = path2+"jet_parton1.dat";// output files of final hadrons
+  ipput_filename2 = path2+"jet_parton1.dat";// oooooooooooooutput files of final hadrons
 
-  sprintf(infiles, ipput_filename2.c_str()); //input parton file 
+  sprintf(infiles, ipput_filename2.c_str()); //iiiiiiiiiiiiiinput parton file 
+  //sprintf(infiles, "pthia_output/%d",nrun);
   FILE* infile1;
   infile1 = fopen(infiles,"r");
 
@@ -88,8 +99,8 @@ string path2=string(argc[3]);
    pythia.readString("SoftQCD:inelastic = on");
 //  //pythia.readString("Charmonium:all = on");  // for calculating cross section of jpsi production
   pythia.readString("PartonLevel:all = on"); // off to only get hard process partons
-  // Show initialization at INFO level
-
+//  // Show initialization at INFO level
+//
 
   readString("Init:showProcesses = off");
   readString("Init:showChangedSettings = off");
@@ -160,10 +171,11 @@ pythia.readString("ColourReconnection:junctionCorrection = 1.15");
 pythia.readString("ColourReconnection:timeDilationMode = 3");    //allow reconnection if single pair of dipoles are in causal contact (maybe try 5 as well?)
 pythia.readString("ColourReconnection:timeDilationPar = 0.18");  //parameter used in causal interaction between strings (mode set above)(maybe try 0.073?)
  */
+//                       pythia.readString("PartonLevel:FSR=off");
         pythia.readString(" StringFlav:probStoUD=0.50");
 
 //        pythia.readString("StringFlav:BtoMratio=0.5");
-pythia.readString("StringFlav:probQQtoQ=0.34");
+pythia.readString("StringFlav:probQQtoQ=0.36");
 
   pythia.readString("HadronLevel:Decay = off");
 // pythia.readString("HadronLevel:all = on");
@@ -201,7 +213,8 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 	int Ngluon=0;
 	int Npair=0;
 	for (int ll=0;ll<Npart;ll++){
-                fscanf(infile1,"%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",&mid,&c_id,&c_px,&c_py,&c_pz,&c_e,&c_x, &c_y, &c_z,&c_t,&Qmid);// format of input partons
+		//fscanf(infile1,"%d %lf %lf %lf %lf\n",&c_id,&c_px,&c_py,&c_pz,&c_e);// fffffffffffffformat of input partons
+                fscanf(infile1,"%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",&mid,&c_id,&c_px,&c_py,&c_pz,&c_e,&c_x, &c_y, &c_z,&c_t,&Qmid);// fffffffffffffformat of input partons
 		idpo[ll]=c_id;
 		if(c_id==21){gindex[Ngluon]=ll;Ngluon++;}
 		pxpo[ll]=c_px;
@@ -217,6 +230,7 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 		Qscale[ll]=sqrt(Qmid);
                 double aamid=0.5*log((pmg+c_pz)/(pmg-c_pz));
                 etao[ll]=aamid;
+		//phio[ll]=sqrt(c_px*c_px+c_py*c_py);
 		phio[ll]=atan2(c_py,c_px);
 		index[ll]=ll;
 		used[ll]=0;
@@ -311,6 +325,7 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 			}
 		}
 	}
+	//cout<<"Nquark= "<<Nquark<<";          "<<" Naquark= "<<Naquark<<endl;
 	// ************* find the quark-anti-quark pairs with smallest distance *************
 	//Nquark>Naquark>0
 	if(Nquark>Naquark){
@@ -415,11 +430,11 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 				}
 			}
 			//test 
-			/*
+			cout<<" PPPPPPP1PPPPPPPPPPPPPPPPPP "<<endl;
 			for(int bb=0;bb<Nquark;bb++){
 				cout<<idpo[qindex[bb]]<<"PPPPt "<<ptpo[qindex[bb]]<<endl;
 			}
-			*/
+			cout<<" QQQQQQQ2QQQQQQQQQQQQQQQQQQ "<<endl;
 			// Assign the pairs
 			for(int ii=0;ii<Nquark;ii++){
 				int used_q[1000]={0};
@@ -448,6 +463,13 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 			//sort the input partons according to Delta R
 			for(int www=0;www<Nquark;www++){
 				double disquark[200][200]={0.0};
+				/*
+				for(int aa=0;aa<Nquark;aa++){
+					for(int bb=0;bb<Nquark;bb++){
+						disquark[aa][bb]=10000000000.0;
+					}
+				}
+				*/
 				// calculate the distance between quark pairs
 				for(int ii=0;ii<Nquark;ii++){
 					for(int pp=0;pp<Naquark;pp++){
@@ -499,6 +521,14 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 				disg[nn]=sqrt(d1)+sqrt(d2); disq[nn]=d1;
 			}
 			int minindex=searchmin2(disg,Npair);//minindex belongs to Npair
+			//test
+			/*
+			for(int pp=0;pp<Npair;pp++){
+				cout<<disg[pp]<<endl;
+			}
+			cout<<"******** miiiiiiiiiiiin **********"<<endl;
+			cout<<disg[minindex]<<endl;
+			*/
 		        strings[minindex][Snum[minindex]]=gindex[pp];
 		        dsting[minindex][Snum[minindex]]=disq[minindex];
 		        Snum[minindex]++;
@@ -524,6 +554,13 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 					}
 				}
 			}
+			//tests
+			/*
+			cout<<"ddddddddddddddddddddddddddd "<<Snum[kkk]<<endl;
+			for(int zz=0;zz<Snum[kkk];zz++){
+				cout<<"dddd "<<dsting[kkk][zz]<<endl;
+			}
+			*/
 		}
 	}
 	
@@ -546,6 +583,11 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 		cout<< nncol[apair[pp]]<<" "<<aacol[apair[pp]]<<" "<<idpo[apair[pp]]<<endl;
 	}
 	cout<<"===================================="<<endl;
+	/*
+	for(int ii=0;ii<Npart;ii++){
+		cout<<idpo[ii]<<" "<<nncol[ii]<<" "<<aacol[ii]<<endl;
+	}
+	*/
 
 // ****************** append the partons into pythia event *********************//
 	double m_str=0.0, x_str=0.0,y_str=0.0,z_str=0.0,t_str=0.0;
@@ -574,8 +616,9 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 	}
 	if(m_str==0)m_str=0.10;
 //****** fragment the remnant partons ***********
+//	if(pythia.forceHadronLevel())cout<<"ddDDDDDDDDDDDDDDDd"<<endl;
 	//pythia.forceTimeShower(1,Npart,maxQ0);//Continue the FSR to the defaulted scale 
-	pythia.forceHadronLevel();
+	pythia.forceHadronLevel();////////////////////////////////////////
 	int simble = 0;
 	for(int i=0; i<pythia.event.size();i++)
 	{
@@ -587,6 +630,10 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 //			if( abs(c_id) ==1||  abs(c_id) ==2|| abs(c_id) ==3 || abs(c_id) ==21)
 			if( (abs(c_id) !=22)&&(abs(c_id) !=11))
   			{
+//				cbar_meson_px = pythia.event[i].px();
+//				cbar_meson_py = pythia.event[i].py();
+//				pt=sqrt(cbar_meson_px*cbar_meson_px+cbar_meson_py*cbar_meson_py);
+////				if(pt>pt_cut){simble=simble+1;}
 				simble=simble+1;
 			}
 //		}
