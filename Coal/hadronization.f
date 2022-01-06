@@ -24,8 +24,6 @@ C     pf(i,4): 4-momenta of the final hadrons                        C
 C     Kst(i): origin of the hadrons(th-th:0, sh-th:1, sh-sh:3)       ! 
 C                                                                    C 
 C********************************************************************! 
-!      SUBROUTINE hadronization(nth,idth,xth,pth,nsh,idsh,xsh,psh,
-!     .     nf,idf,xf,pf,Kst)!changed by wenbin 
       SUBROUTINE hadronization(nth,idth,xth,pth,nsh,idsh,xsh,psh,
      .     nf,idf,xf,pf,Kst,Npt,Kpx,Ppx,Xpx,
      .    NCTnr, NCTKr,CTPr,CTXr,QQscale,qfscale) 
@@ -178,10 +176,10 @@ C..... Constants ................
       SigLBO = sqrt(3.)*SigRO2/2.
       SigLBO2 = SigLBO*SigLBO    
 
-!**** masses of u,d and s quarks (for AMPT) **************************
-      xmq = 0.008
+!**** masses of u,d and s quarks **************************
+      xmq = 0.25                    !mass_u/d=0.25 at T=T_freezeout
       xmq2 = xmq*xmq
-      xms = 0.199                   !mass_s=0.475 changed by wenbin 2018.11.23
+      xms = 0.475                   !mass_s=0.475 at T=T_freezeout
       xms2 = xms*xms
       
 !**** masses of hadrons **********************
@@ -515,8 +513,8 @@ C..   print*, tBL
                   
 !.... Summing 3D w.w. functions up to nlev ......... 
                   wigR1x = wig0BRx
-                  maxfB=10!maxf !PPPPPPPPPP
-                  if(abs(Kq(i,2)*Kq(j,2)*Kq(j2,2)).eq.6)maxfB=-1 !LLLLLLLL !added by wenbin !the excited for Lambda
+                  maxfB=10 !!Proton's highest excited state
+                  if(abs(Kq(i,2)*Kq(j,2)*Kq(j2,2)).eq.6)maxfB=5 !Lambda's highest excited state
 
                   do iRx=0, maxfB
                      wigR1y = wig0BRy
@@ -1503,7 +1501,7 @@ C........... position and time of the recombined meson in the Lab frame ....
 !        endif
         nmin = 0
         nmax = maxf
-        if(Kq(i,2)*Kq(j,2).eq.-6.or.Kq(i,2)*Kq(j,2).eq.-3)nmax = 10 !KKKKKKKKKKKKKKKKKKKKK
+        if(Kq(i,2)*Kq(j,2).eq.-6.or.Kq(i,2)*Kq(j,2).eq.-3)nmax = 10 !Kaon's highest excited state
         do ichi=nmin, nmax
            pmf=(uchi**ichi)*exp(-uchi)/factor(ichi)
            if(ichi.ge.125) pmf=exp(float(ichi)-uchi)*(uchi/float(ichi))

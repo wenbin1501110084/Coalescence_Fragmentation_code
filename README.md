@@ -1,10 +1,18 @@
 This is the coalescence+fragmentation hadronization code. When you use this code, please cite our papers:
-       W.~Zhao, etc. al.[arXiv:2103.14657 [hep-ph]].                                               
+       W.~Zhao, etc. al.[arXiv:2103.14657 [hep-ph]].
        W.~Zhao, etc. al.Phys. Rev. Lett.125, (2020) no.7, 072301.
        
        
 ######### Coalescence code: #############
-The folder, Coal, contains the coalescence code.  
+The format for the input thermal parton for coalescence is:
+     number_of_thermal_parton
+     id, px, py, pz, energy, x, y, z, t
+
+The format for the input shower parton for coalescence is:
+     number_of_shower_parton
+     id, px, py, pz, mass, x, y, z, t
+
+The folder, Coal, contains the coalescence code.
 You compile the coalescence code by:
         make
 Then run the coalescence code by:
@@ -47,3 +55,6 @@ Then move the file coaleced_hadron.dat in the Coal into the folder to_UrQMD. Mov
         ./tourqmd number_of_event 
 It will output the file oscar.dat that input for the UrQMD.
 
+The format for the oscar.dat is:
+     event_id    number_of_hadron
+     id, px, py, pz, energy, mass, x, y, z, t

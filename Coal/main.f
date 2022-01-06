@@ -59,23 +59,23 @@ C.... initialization of binning ..........
          READ(45,*)ntherm
          numq = 0
       do itherm=1, ntherm
-         READ(45,*)mid,Kth(itherm),Pth(itherm,1),
-     .        Pth(itherm,2),Pth(itherm,3),Pth(itherm,4),amid,
+         READ(45,*)Kth(itherm),Pth(itherm,1),
+     .        Pth(itherm,2),Pth(itherm,3),Pth(itherm,4),
      .  Xth(itherm,1),Xth(itherm,2),Xth(itherm,3),Xth(itherm,4)       !KTh thermal parton ID
       enddo
 !..... read LBT parton from LBT result 
 !.....number of partons .........................
 
          nchth = 0
-         write(*,*)"a ",numparton
 !.....  Shower partons ..........................
+         READ(30,*)numparton
          DO ish=1, numparton
-            READ(30,*)mid,idsh(ish),P(ish,1),P(ish,2),
-     .     P(ish,3),amid,XV(ish,1),XV(ish,2),XV(ish,3),
+            READ(30,*)idsh(ish),P(ish,1),P(ish,2),
+     .     P(ish,3),parton_mass,XV(ish,1),XV(ish,2),XV(ish,3),
      .           XV(ish,4)
           Qscale(ish)=0.0
               P(ish,4)=sqrt(P(ish,1)*P(ish,1)+P(ish,2)*P(ish,2)
-     .         + P(ish,3)*P(ish,3)+amid*amid)
+     .         + P(ish,3)*P(ish,3)+parton_mass*parton_mass)
          enddo
          call hadronization(ntherm,Kth,Xth,Pth,numparton,idsh,XV,P,nH,
      .        KfH,XH,PH,Kst,Npt,Kpx,Ppx,Xpx, !
@@ -83,7 +83,6 @@ C.... initialization of binning ..........
             write(51,17)IEV,nH
 C.... Binning the produced hadrons ........................
          do ihad=1, nH
-!            pT = sqrt(PH(ihad,1)**2.+PH(ihad,2)**2.)
             write(51,16) IEV,KfH(ihad),PH(ihad,1),PH(ihad,2),
      .           PH(ihad,3),PH(ihad,4),XH(ihad,1),XH(ihad,2),XH(ihad,3),
      .           XH(ihad,4),Kst(ihad)!Kst is origin of the hadrons(th-th:0, sh-th:1, sh-sh:2,frag:3)
@@ -107,11 +106,6 @@ C.... Binning the writing ........................
 !********* write the coaleced thermal  partons ********
             write(53,*)"# ",IEV,NCTnr
 C.... Binning the produced hadrons ........................
-        if(NCTnr.eq.0)then
-             write(53,*)1,0,0,0,0,0,0,0,0,0
-             write(53,*)1,0,0,0,0,0,0,0,0,0
-        endif   
-
          do ihad=1, NCTnr
            ttau=sqrt(CTXr(ihad,4)*CTXr(ihad,4)-CTXr(ihad,3)*CTXr(ihad,3)
      .              )
