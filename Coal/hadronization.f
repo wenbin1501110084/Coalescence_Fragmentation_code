@@ -547,7 +547,7 @@ C..   print*, tBL
                   Wigpro =  sumWigB!changed by wenbin to account the color degeneracy 2019.02.24
 !                  Wigpro =  sumWigB*ZKfactor !changed by wenbin to account the color degeneracy 2019.02.24
 !                  Wiglambda = 0.!sumWigB !changed by wenbin 2018.11.13
-                  Wiglambda = sumWigB!changed by wenbin 2018.11.13
+                  Wiglambda = sumWigB/2.0!Only the Lambda and Sigma0 
 !                  print*, Wigpro
                   prob5 = ran()
                   
@@ -593,9 +593,11 @@ C..   print*, tBL
                   prob4 = ran()
 !*********************************************************************! 
 !    Recombine into Sigma(1385) and Sigma->Lambda + pion              ! 
-!*********************************************************************! 
+!*********************************************************************!
+                  
                   if(prob4.le.Wiglambda.and.abs(Kq(i,2)*Kq(j,2)*Kq(j2
      .                 ,2)).eq.6) then
+                  if(xinvB.lt.xmLamb)goto 50
 !*******************Lambda in the ground states (n=0) *********************  
                      if(prob4.le.wig0B/4.) then
                         nH = nH + 1
@@ -632,7 +634,7 @@ C..   print*, tBL
                         nchg(j2)= 0
                         goto 30
                      endif
-                     
+!*******************end of Lambda in the ground states (n=0) *********************  
                      probSigDec = ran()
                      if(probSigDec.le.0.5) then
                         xmSig = xinvB
@@ -713,10 +715,11 @@ C..   print*, tBL
                         nchg(j2) = 0
                         goto 30
                      endif
-                  
+
 C...... Sigma -> Lambda + pi + pi .......................
                      if(probSigDec.gt.0.5) then
-                        if(xinvB.le.xmLamb+xmpi+xmpi) goto 50
+                    if(xinvB.le. 1.192)goto 50 ! Sigma0 -> Lambda +pi
+                    if(xinvB.le.xmLamb+xmpi+xmpi)xinvB=xmLamb+xmpi+xmpi
                         call threebody(xinvB,xmLamb,xmpi,xmpi,pxbaryon,
      .                       pybaryon,pzbaryon,pxSigtoLamb1,
      .                       pySigtoLamb1,pzSigtoLamb1,eSigtoLamb1,
