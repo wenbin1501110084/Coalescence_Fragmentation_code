@@ -81,8 +81,25 @@ C.... initialization of binning ..........
      .        KfH,XH,PH,Kst,Npt,Kpx,Ppx,Xpx, !
      .        NCTnr, NCTKr,CTPr,CTXr,Qscale,qfscale)
             write(51,17)IEV,nH
-C.... Binning the produced hadrons ........................
+C.... Output the produced hadrons ........................
          do ihad=1, nH
+            if(ihad.lt.nH) then
+               if ( PH(ihad,1).eq.PH(ihad+1,1) .and.
+     .              PH(ihad,2).eq.PH(ihad+1,2) .and.
+     .              PH(ihad,3).eq.PH(ihad+1,3) .and.
+     .              KfH(ihad).eq.KfH(ihad+1)) then
+                    ptmag = sqrt(PH(ihad,1)*PH(ihad,1) +
+     .                           PH(ihad,2)*PH(ihad,2) +
+     .                           PH(ihad,3)*PH(ihad,3))
+                   theta1 = atan2(PH(ihad,2), PH(ihad,1))
+                   thetap1 = theta1+ran()*0.314 - 0.157 
+                   theta2 = asin(PH(ihad,3)/ptmag)
+                   thetap2 = theta2+ran()*0.314 - 0.157 
+                   PH(ihad,1) = ptmag*cos(thetap)*cos(thetap2)
+                   PH(ihad,2) = ptmag*sin(thetap)*cos(thetap2)
+                   PH(ihad,3) = ptmag*sin(thetap2)
+                endif
+            endif
             write(51,16) IEV,KfH(ihad),PH(ihad,1),PH(ihad,2),
      .           PH(ihad,3),PH(ihad,4),XH(ihad,1),XH(ihad,2),XH(ihad,3),
      .           XH(ihad,4),Kst(ihad)!Kst is origin of the hadrons(th-th:0, sh-th:1, sh-sh:2,frag:3)

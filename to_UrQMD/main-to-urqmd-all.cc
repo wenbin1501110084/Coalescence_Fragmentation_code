@@ -65,7 +65,7 @@ int main( int argc, char* argv[])
                 char infilehypersf[128];
                 sprintf(infilehypersf,"./mc_particle_list"); // The Cooper-Frye sampled thermal hadrons
                 ifstream inhy(infilehypersf);
-                fscanf(infilec,"%d %d\n",&mid,&Nejet);
+                fscanf(infilec,"%d\n",&Nejet);
 
 		if(!infilef1.eof()){infilef1>>mid>>Nfrag1;}else{Nfrag1=0;}
 
