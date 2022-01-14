@@ -22,7 +22,7 @@ C********************************************************************!
 !     .     nf,idf,xf,pf,Kst)!changed by wenbin 
       SUBROUTINE hadronization(nth,idth,xth,pth,nsh,idsh,xsh,psh,
      .     nf,idf,xf,pf,Kst,Npt,Kpx,Ppx,Xpx,
-     .    NCTnr, NCTKr,CTPr,CTXr) !added by wenbin for outputing remnant jet partons  ! NCTnr,NCTKr, CTPr, CTXr the information of coalesced thermal partons Wenbin
+     .    NCTnr, NCTKr,CTPr,CTXr,QQscale,qfscale) !added by wenbin for outputing remnant jet partons  ! NCTnr,NCTKr, CTPr, CTXr the information of coalesced thermal partons Wenbin
  
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       common/const/pi,hbarc
@@ -32,9 +32,9 @@ C********************************************************************!
       DIMENSION idsh(5000),xsh(5000,4),psh(5000,4)
       DIMENSION idf(5000),xf(5000,4),pf(5000,4)
       
-      DIMENSION Kst(5000)
-      DIMENSION P(5000,5),XV(5000,5) 
-      DIMENSION Kp(5000,5)
+      DIMENSION Kst(5000),QQscale(5000),rqscale(5000)
+      DIMENSION P(5000,5),XV(5000,5),qfscale(5000) 
+      DIMENSION Kp(5000,5),qscale(5000)
       DIMENSION KH(5000,2),PH(5000,5),XH(5000,5)
       DIMENSION KfH(5000),PfH(5000,5),XfH(5000,5)
       DIMENSION Kr(5000,5),Pr(5000,5),Xr(5000,5)
@@ -65,6 +65,7 @@ C......Thermal Partons .....................
          XV(numpt,2) = xth(ith,2)
          XV(numpt,3) = xth(ith,3)
          XV(numpt,4) = xth(ith,4)
+         qscale(numpt) =0.0
       ENDDO
 
 C......Shower Partons .....................                 
@@ -81,12 +82,13 @@ C......Shower Partons .....................
          XV(numpt,2) = xsh(ish,2)
          XV(numpt,3) = xsh(ish,3)
          XV(numpt,4) = xsh(ish,4)
+         qscale(numpt)=QQscale(ish)
       ENDDO
       
 C.......total number of thermal and shower partons .....
       numtot = nth+nsh
       call recomb(numtot,Kp,P,XV,nH,KH,PH,XH,nr,Kr,Pr,Xr,
-     .              NCTnr,NCTKr,CTPr,CTXr)
+     .              NCTnr,NCTKr,CTPr,CTXr,qscale,rqscale)
 
       !write(*,*)"dddddd",NCTnr,numtot
       !write(*,*)"CTsPr=",CTPr(NCTnr,1)
@@ -114,7 +116,8 @@ C.....the number of recombined hadrons ..............
 !         print*, irem,Kr(irem,2),Pr(irem,1)
 !      enddo
        !write(*,*)"222222",nr 
-      call remorg(nr,Kr,Pr,Xr,Npt,Kpx,Ppx,Xpx)
+      call remorg(nr,Kr,Pr,Xr,Npt,Kpx,Ppx,Xpx,rqscale,
+     .            qfscale)
        do i=1,10
          !write(*,*)"3333 ",Ppx(i,2)
        enddo
@@ -171,7 +174,7 @@ C   Xr: space-time of remnant quarks                  !
 C                                                     C
 C*****************************************************!
       subroutine recomb(np,Kp,Pp,Xp,nH,KH,PH,XH,nr,Kr,Pr,Xr,
-     .                NCTnr,NCTKr,CTPr,CTXr)
+     .                NCTnr,NCTKr,CTPr,CTXr,qscale,rqscale)
       IMPLICIT DOUBLE PRECISION(a-H, O-Z)
       common/const/pi,hbarc
       common/parm/sigma,sigmapro,sigmaK,maxf
@@ -180,11 +183,11 @@ C*****************************************************!
       dimension Kq(5000,5), Pq(5000,5), Xq(5000,5)
       dimension KH(5000,2), PH(5000,5), XH(5000,5)
       dimension Kr(5000,5), Pr(5000,5), Xr(5000,5)
-      dimension nchg(5000)
+      dimension nchg(5000),qscale(5000),Q0(5000)
       dimension xmdx(4), pMx(3), pdx(4,4)
       dimension xmTx(4), pTx(3), pdBx(4,4)
       dimension NCTKr(5000), CTPr(5000,4), CTXr(5000,4) !coalesced thermal partons !zdded by wenbin 
-
+      dimension rqscale(5000)
 C..... Constants ................
       pi = 3.1415926535897932384626433832795
       hbarc = 0.197327          ! [ GeV*fm ]  
@@ -221,7 +224,7 @@ C...... Degeneracies ..............
 !**** masses of u,d and s quarks **************************
       xmq = 0.33
       xmq2 = xmq*xmq
-      xms = 0.45                   !mass_s=0.475 changed by wenbin 2018.11.23
+      xms = 0.5                   !mass_s=0.475 changed by wenbin 2018.11.23
       xms2 = xms*xms
       
 !**** masses of hadrons **********************
@@ -244,7 +247,7 @@ C....Initialize number of quarks, number of hadrons, number of remnants
       nH = 0
       nr = 0      
       NCTnr=0
-      pttcutsquare=1.5*1.5!ttttttttttt
+      pttcutsquare=1111.5*11111.5!ttttttttttt
 
 !      pt_low_cut_th=1.600 !!CCC pt cut of the gluon splits quark  !added by wenbin 2019.03.09
 !      pt_low_cut_lbt=2.0000 !!CCC pt cut of the gluon splits quark  !added by wenbin 2019.03.09
@@ -271,7 +274,7 @@ C....Initialize number of quarks, number of hadrons, number of remnants
             Xq(numq,2) = Xp(ipt,2)
             Xq(numq,3) = Xp(ipt,3)
             Xq(numq,4) = Xp(ipt,4)
-
+            Q0(numq)   = qscale(ipt)
 !******gluons ***********************************                               
          else
             if(Kp(ipt,2).eq.21) then
@@ -310,6 +313,7 @@ C....Initialize number of quarks, number of hadrons, number of remnants
                   Xq(numq,2) = xgny
                   Xq(numq,3) = xgnz
                   Xq(numq,4) = xgnt
+                  Q0(numq)   = qscale(ipt) 
 !           total_parton_energy=total_parton_energy+Pq(numq,4)
 
                   numq = numq + 1
@@ -325,6 +329,7 @@ C....Initialize number of quarks, number of hadrons, number of remnants
                   Xq(numq,2) = xgny
                   Xq(numq,3) = xgnz
                   Xq(numq,4) = xgnt
+                  Q0(numq)   = qscale(ipt)
 !               endif !added by wenbin 2019.03.09
 !           total_parton_energy=total_parton_energy+Pq(numq,4)
 
@@ -340,6 +345,7 @@ C***************************************************
          if(Kq(ix,3).eq.1) ktotf = ktotf + nchg(ix)
          if(abs(Kq(ix,2)).le.2) Pq(ix,5) = xmq
          if(abs(Kq(ix,2)).eq.3) Pq(ix,5) = xms
+         pppp=ran()
       enddo
       numqx = numq
       
@@ -382,13 +388,18 @@ C.......NOT count th-th-th recombination ...............
                 if (Kq(i,1).eq.0.and.Kq(j,1).eq.0.and.Kq(j2,1).eq.0)
      .              then! changed by wenbin 2018.11.23             !TTT       
 !     .                 goto 50 !               changed by wenbin 2018.11.23                                      !TTT
+
+                  px3 = Pq(j2,1)
+                  py3 = Pq(j2,2)
+                  pz3 = Pq(j2,3)
+
+               ! write(*,*)"dfsdfdsf", px1,px2,px3
                 pt1square=px1*px1+py1*py1
                 pt2square=px2*px2+py2*py2
                 pt3square=px3*px3+py3*py3
-                
-                if(pt1square.lt.pttcutsquare.or.
-     .             pt2square.lt.pttcutsquare.or.
-     .             pt3square.lt.pttcutsquare)goto 50
+                if(pt1square.lt.pttcutsquare)goto 50
+                if(pt2square.lt.pttcutsquare)goto 50
+                if(pt3square.lt.pttcutsquare)goto 50
               
                 else www=1.0
                 endif
@@ -536,7 +547,7 @@ C..   print*, tBL
                   ulambx=0.5*(xr2x**2./SigL2+(xk2x**2.)*SigL2/hbarc2)
                   ulamby=0.5*(xr2y**2./SigL2+(xk2y**2.)*SigL2/hbarc2)
                   ulambz=0.5*(xr2z**2./SigL2+(xk2z**2.)*SigL2/hbarc2)
-                  cccut=40.0!CCC the cut for the wigner fucntion !added by wenbin
+                  cccut=45.0!CCC the cut for the wigner fucntion !added by wenbin
                   if((urhox+urhoy+urhoz).gt. cccut)goto 50!added by wenbin
                   if((ulambx+ulambx+ulambx).gt. cccut)goto 50!added by wenbin
 
@@ -565,7 +576,7 @@ C..   print*, tBL
 !.... Summing 3D w.w. functions up to nlev ......... 
                   wigR1x = wig0BRx
                   maxfB=10!maxf !PPPPPPPPPP
-                  if(abs(Kq(i,2)*Kq(j,2)*Kq(j2,2)).eq.6)maxfB=-1 !LLLLLLLL !added by wenbin !the excited for Lambda
+                  if(abs(Kq(i,2)*Kq(j,2)*Kq(j2,2)).eq.6)maxfB=5 !LLLLLLLL !added by wenbin !the excited for Lambda
 
                   do iRx=0, maxfB
                      wigR1y = wig0BRy
@@ -598,7 +609,7 @@ C..   print*, tBL
                   Wigpro =  sumWigB!changed by wenbin to account the color degeneracy 2019.02.24
 !                  Wigpro =  sumWigB*ZKfactor !changed by wenbin to account the color degeneracy 2019.02.24
 !                  Wiglambda = 0.!sumWigB !changed by wenbin 2018.11.13
-                  Wiglambda = sumWigB!changed by wenbin 2018.11.13
+                  Wiglambda = sumWigB/2.0!Only the Lambda and Sigma0 
 !                  print*, Wigpro
                   prob5 = ran()
                   
@@ -644,9 +655,11 @@ C..   print*, tBL
                   prob4 = ran()
 !*********************************************************************! 
 !    Recombine into Sigma(1385) and Sigma->Lambda + pion              ! 
-!*********************************************************************! 
+!*********************************************************************!
+                  
                   if(prob4.le.Wiglambda.and.abs(Kq(i,2)*Kq(j,2)*Kq(j2
      .                 ,2)).eq.6) then
+                  if(xinvB.lt.xmLamb)goto 50
 !*******************Lambda in the ground states (n=0) *********************  
                      if(prob4.le.wig0B/4.) then
                         nH = nH + 1
@@ -683,7 +696,7 @@ C..   print*, tBL
                         nchg(j2)= 0
                         goto 30
                      endif
-                     
+!*******************end of Lambda in the ground states (n=0) *********************  
                      probSigDec = ran()
                      if(probSigDec.le.0.5) then
                         xmSig = xinvB
@@ -764,10 +777,11 @@ C..   print*, tBL
                         nchg(j2) = 0
                         goto 30
                      endif
-                  
+
 C...... Sigma -> Lambda + pi + pi .......................
                      if(probSigDec.gt.0.5) then
-                        if(xinvB.le.xmLamb+xmpi+xmpi) goto 50
+                    if(xinvB.le.1.192)goto 50 ! Sigma0 -> Lambda +pi
+                    if(xinvB.le.xmLamb+xmpi+xmpi)xinvB=xmLamb+xmpi+xmpi
                         call threebody(xinvB,xmLamb,xmpi,xmpi,pxbaryon,
      .                       pybaryon,pzbaryon,pxSigtoLamb1,
      .                       pySigtoLamb1,pzSigtoLamb1,eSigtoLamb1,
@@ -1396,14 +1410,14 @@ C...... Sigma -> Lambda + pi + pi .......................
 !****** recombination of quark and antiquark *******************
       else
 C........NOT consider th-th recombinatoin ......................               
-         if(Kq(i,1).eq.0.and.Kq(j,1).eq.0) 
-     .     then !goto 40 !changed by wenbin 2018.11.23 !TTT
-                pt1square=px1*px1+py1*py1
-                pt2square=px2*px2+py2*py2
+!         if(Kq(i,1).eq.0.and.Kq(j,1).eq.0) 
+!     .     then !goto 40 !changed by wenbin 2018.11.23 !TTT
+!                pt1square=px1*px1+py1*py1
+!                pt2square=px2*px2+py2*py2
 
-                if(pt1square.lt.pttcutsquare.or.
-     .             pt2square.lt.pttcutsquare)goto 40
-         endif
+                if(pt1square.lt.pttcutsquare)goto 40!     .             pt2square.lt.pttcutsquare)goto 40
+                if(pt2square.lt.pttcutsquare)goto 40
+!         endif
 C........NOT consider hard-hard recombinatoin ......................
 !         if(Kq(i,1)*Kq(j,1).gt.0) goto 40 !changed by wenbin2018.11.23 !TTT
 !*********momentum of the recombined mesons ****************
@@ -2380,7 +2394,7 @@ C........... position and time of the recombined meson in the Lab frame ....
              if(probdec.le.decpro2) then
 !             if(xinvm.le.xmpi*3.) then
               call twobody(xinvm,xmpi,xmpi,pxpion,pypion,pzpion,
-     .             pxpitopi1,pypitopi1,pzpitopi1, epitopi1,pxiptopi2,
+     .             pxpitopi1,pypitopi1,pzpitopi1, epitopi1,pxpitopi2,
      .             pypitopi2,pzpitopi2,epitopi2)
 
               nH = nH + 1
@@ -2680,7 +2694,7 @@ C........... position and time of the recombined meson in the Lab frame ....
              if(probdec.le.decpro22) then
 !!             if(xinvm.le.xmpi*3.) then
               call twobody(xinvm,xmpi,xmpi,pxpion,pypion,pzpion,
-     .             pxpitopi1,pypitopi1,pzpitopi1, epitopi1,pxiptopi2,
+     .             pxpitopi1,pypitopi1,pzpitopi1, epitopi1,pxpitopi2,
      .             pypitopi2,pzpitopi2,epitopi2)
 
               nH = nH + 1
@@ -2851,13 +2865,13 @@ C........... position and time of the recombined meson in the Lab frame ....
 !
 !
 !*************  two  pion decay *************!WB 
-              if(xinvm.le.xmpi*3.) then !WB
+              if(xinvm.ge.xmpi*2. .and.xinvm.le.xmpi*3.) then !WB
 !**************** two-pion decay **************************************************************
 !             if(probdec.le.decpro22) then
 !             if(xinvm.le.xmpi*3.) then
               call twobody(xinvm,xmpi,xmpi,pxpion,pypion,pzpion,
      .             pxpitopi1,pypitopi1,pzpitopi1, 
-     .             epitopi1,pxiptopi2,
+     .             epitopi1,pxpitopi2,
      .             pypitopi2,pzpitopi2,epitopi2)
 
               nH = nH + 1
@@ -2996,6 +3010,7 @@ C........... position and time of the recombined meson in the Lab frame ....
             Xr(nr,2) = Xq(irem,2)
             Xr(nr,3) = Xq(irem,3)
             Xr(nr,4) = Xq(irem,4)
+            rqscale(nr)=Q0(irem)
             !write(*,*)"111 ",Pr(nr,2),nr
             kremtot = kremtot + Kr(nr,2)/abs(Kr(nr,2))
          endif
@@ -3163,7 +3178,7 @@ C...  print*, kremtot
       IMPLICIT DOUBLE PRECISION(a-H, O-Z)
       common/const/pi,hbarc
       hbarc = 0.19732
-      xmu = 0.33
+      xmu = 0.25
       xms = 0.45
 !*****ratio = Gamma(g->ssbar)/Gamma(g->uubar, ddbar)******* 
       ratio = 0.5*sqrt((xmg**2.-4.*xms**2.)/(xmg**2.-4.*xmu**2.))*
@@ -3527,12 +3542,13 @@ C   Ppt: 3-momenta of the remnant partons                           !
 C   Xpt: position and time of the ordered remnant partons           C
 C                                                                   C
 C*******************************************************************!
-      subroutine remorg(Nq,Kq,Pq,Xq,Npt,Kpt,Ppt,Xpt)
+      subroutine remorg(Nq,Kq,Pq,Xq,Npt,Kpt,Ppt,Xpt,rqscale,
+     .                  qscale)
       
       IMPLICIT DOUBLE PRECISION(a-H, O-Z)
       dimension Kq(5000,5),Pq(5000,5),Xq(5000,5)
       dimension Ppg(5000,5),Xpg(5000,5)
-      dimension Kx(5000)
+      dimension Kx(5000),rqscale(5000),qscale(5000)
       dimension Kpt(5000), Ppt(5000,5),Xpt(5000,5)
       dimension nchg(5000),ndhg(5000)
 
@@ -3561,6 +3577,7 @@ C........ leading quarks ........................
             Xpt(kg,4) = Xq(i,4)
             !write(*,*)"222 ",Ppt(kg,2)
             Kpt(kg) = Kq(i,2)
+            qscale(kg)=rqscale(i)
             ndhg(kg) = 1
             nchg(i) = 0
             goto 41
@@ -3579,7 +3596,7 @@ C........ leading quarks ........................
                Xpt(kg,2) = (Xq(i,2)+Xq(j,2))/2.
                Xpt(kg,3) = (Xq(i,3)+Xq(j,3))/2.
                Xpt(kg,4) = (Xq(i,4)+Xq(j,4))/2.
-
+               qscale(kg)= (rqscale(i)+rqscale(j))/2.
                Kpt(kg) = 21
                ndhg(kg) = 1
                nchg(i) = 0
@@ -3589,27 +3606,28 @@ C........ leading quarks ........................
  42         continue
          enddo
 !..... form half gluons ..................!added by wenbin 
-         if(nchg(i) .ne. 0 .and. Kq(i,1).ne.0 ) then
-!              probgg = ran()
+!         if(nchg(i) .ne. 0 .and. Kq(i,1).ne.0 ) then
+!              probgg = ran()!changed by wenbin
 !              if(probgg.le. 0.50) then
-                 kg = kg + 1
-                 Ppt(kg,1) = Pq(i,1)
-                 Ppt(kg,2) = Pq(i,2)
-                 Ppt(kg,3) = Pq(i,3)
-                 Ppt(kg,4) = Pq(i,4)
-                 Xpt(kg,1) = (Xq(i,1)+Xq(i,1))/2.
-                 Xpt(kg,2) = (Xq(i,2)+Xq(i,2))/2.
-                 Xpt(kg,3) = (Xq(i,3)+Xq(i,3))/2.
-                 Xpt(kg,4) = (Xq(i,4)+Xq(i,4))/2.
-                 Kpt(kg) = Kq(i,2)
-                 ndhg(kg) = 1
-                 nchg(i) = 0
-                 goto 41
+!                 kg = kg + 1
+!                 Ppt(kg,1) = Pq(i,1)*2.
+!                 Ppt(kg,2) = Pq(i,2)*2.
+!                 Ppt(kg,3) = Pq(i,3)*2.
+!                 Ppt(kg,4) = Pq(i,4)*2.
+!                 Xpt(kg,1) = (Xq(i,1)+Xq(i,1))/2.
+!                 Xpt(kg,2) = (Xq(i,2)+Xq(i,2))/2.
+!                 Xpt(kg,3) = (Xq(i,3)+Xq(i,3))/2.
+!                 Xpt(kg,4) = (Xq(i,4)+Xq(i,4))/2.
+!                 Kpt(kg) = 21!Kq(i,2)
+!                 qscale(kg)=rqscale(i)
+!                 ndhg(kg) = 1
+!                 nchg(i) = 0
+!                 goto 41
 !              else
 !                 nchg(i) = 0
 !                 goto 41
 !              endif
-         endif
+!         endif
 !...............................................
 
  41      continue
