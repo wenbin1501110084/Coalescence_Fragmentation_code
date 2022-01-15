@@ -18,6 +18,7 @@ You compile the coalescence code by:
 Then run the coalescence code by:
         ./main THE/PATH/TO/INPUT/PARTON
 It will output the coaleced_hadron.dat that contains the coaleced hadrons. The file remnant_jet_parton.dat is the remnant partons that will hadronized by fragmentation.
+Please note that the first line in the input.txt is the number_of_event, which should keep the same as below.
 
 ######## Install Pythia8  ###########
      - Create a folder for installing Pythia8
@@ -35,7 +36,7 @@ You first run the code in the folder, to_frag2_with_thth.
 Compile the code:
         g++ -o tofrag main-to-urqmd-all.cc
 Move the remnant_jet_parton.dat from Coal to the to_frag2_with_thth. Then run:
-        ./tofrag
+        ./tofrag number_of_event
 It will return the file jet_parton1.dat that for the string fragmentation.
 
 cp -r main_string_fragmentation.cc TO/PYTHIA/EXAMPLE/FILE/main2000.cc
