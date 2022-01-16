@@ -5,7 +5,7 @@
       IMPLICIT DOUBLE PRECISION(a-H, O-Z)
       common/const/pi,hbarc
       common/parm/sigma,sigmapro,sigmaK,maxf      
-       CHARACTER*200 NAME1
+       !CHARACTER*200 NAME1
       DIMENSION P(5000,4),XV(5000,4)
       DIMENSION Kp(5000,4),idsh(5000),Kpx(5000)
       DIMENSION PH(5000,4),Kst(5000),Qscale(5000)
@@ -17,10 +17,8 @@
       DIMENSION NCTKr(5000), CTPr(5000,4),CTXr(5000,4)
 
 C.... input files .........................
-      call GETARG(1,NAME1)
+      !call GETARG(1,NAME1)
       open (unit=30, file='shower_parton', status='unknown')
-      open (unit=45, file='thermal_parton.dat', status='unknown')
-
 C.... output files ........................
       open (unit=51, file='coaleced_hadron.dat', status='unknown')
       open (unit=52, file='remnant_jet_parton.dat', status='unknown')
@@ -34,7 +32,13 @@ C.... output files ........................
       READ(88,*) sigmaK
       READ(88,*) sigmapro
       READ(88,*) maxf
-
+      READ(88,*) thermal_flag
+      if (thermal_flag.eq.1)then
+         open (unit=45, file='thermal_parton.dat', status='unknown')
+         READ(45,*)ntherm
+      else 
+         ntherm = 0
+      endif
 !.........................      
       step = 30./40.
       pi = 2.*asin(1.)
@@ -56,7 +60,7 @@ C.... initialization of binning ..........
 
       DO IEV=1, NEV             
 !..... read thermal parton from hydro ...
-         READ(45,*)ntherm
+         
          numq = 0
       do itherm=1, ntherm
          READ(45,*)Kth(itherm),Pth(itherm,1),

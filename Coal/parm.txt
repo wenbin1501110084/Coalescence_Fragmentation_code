@@ -1,5 +1,0 @@
-1.09     ! sigma [fm] for pion recombination
-0.84     ! sigma [fm] for kaon recombination
-1.24     ! sigma [fm] for nucleon recombination
-8        ! maximum energy level considerend for the recombination
-1340    ! number of thermal partons

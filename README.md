@@ -15,6 +15,7 @@ The format for the input shower parton for coalescence is:
 The folder, Coal, contains the coalescence code.
 You compile the coalescence code by:
         make
+Then move the shower_parton.dat and thermal_parton.dat (if you have) into the Coal folder.
 Then run the coalescence code by:
         ./main THE/PATH/TO/INPUT/PARTON
 It will output the coaleced_hadron.dat that contains the coaleced hadrons. The file remnant_jet_parton.dat is the remnant partons that will hadronized by fragmentation.
