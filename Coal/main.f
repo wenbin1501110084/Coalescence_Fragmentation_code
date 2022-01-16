@@ -42,8 +42,6 @@ C.... output files ........................
 !.........................      
       step = 30./40.
       pi = 2.*asin(1.)
-      
-      ntherm = 1340
       xnevt = float(NEV)
       nremq = 0
       kpi = 0
