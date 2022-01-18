@@ -71,6 +71,11 @@ C.... initialization of binning ..........
          nchth = 0
 !.....  Shower partons ..........................
          READ(30,*)numparton
+         if (numparton .lt. 5000) then
+             write(*,*)"parton number exceeds 5000." 
+             write(*,*)"please enlarge the length of array in the code."
+         endif
+         
          DO ish=1, numparton
             READ(30,*)idsh(ish),P(ish,1),P(ish,2),
      .     P(ish,3),parton_mass,XV(ish,1),XV(ish,2),XV(ish,3),
