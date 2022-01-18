@@ -16,7 +16,7 @@
 //  copywrite Wenbin Zhao, 2020, 12.24
 //  When you use this code, please cite our papers:
 //      W.~Zhao, etc. al.[arXiv:2103.14657 [hep-ph]].                                               
-//      W.~Zhao,etc.al.Phys. Rev. Lett.125, (2020) no.7, 072301.
+//      W.~Zhao, etc. al.Phys. Rev. Lett.125, (2020) no.7, 072301.
 //*****************************
 using namespace Pythia8;
 int searchmin(double*p, int *q,int*s,int len);

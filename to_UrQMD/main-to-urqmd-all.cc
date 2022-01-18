@@ -67,7 +67,11 @@ int main( int argc, char* argv[])
                 ifstream inhy(infilehypersf);
                 fscanf(infilec,"%d\n",&Nejet);
 
-		if(!infilef1.eof()){infilef1>>mid>>Nfrag1;}else{Nfrag1=0;}
+		if(!infilef1.eof()) { 
+		    infilef1>>mid>>Nfrag1;
+		} else { 
+		    Nfrag1=0;
+		}
 
                 int count=0;
 		if (Nfrag1>0){
@@ -129,7 +133,7 @@ int main( int argc, char* argv[])
 			// get the real hadron id of jet hadron and coalescence hadron 
 			//pion
 			//if(mark!=0){
-				if((abs(id)==1)||(abs(id)==11)){	
+				if(abs(id)==1){	
 					double ram=random(1000)/1000.00;
 					if(ram<0.333){
 						energy=sqrt(px*px+py*py+pz*pz+masspi*masspi);
@@ -178,7 +182,7 @@ int main( int argc, char* argv[])
 					}
 				}
 				//kaon
-				if((abs(id)==2)||(abs(id)==22)){	
+				if(abs(id)==2){	
 					double ram=random(1000)/1000.00;
 					if(ram<0.25){
 						energy=sqrt(px*px+py*py+pz*pz+massK*massK);
@@ -242,14 +246,13 @@ int main( int argc, char* argv[])
 					}
 				}
 				//nucleon(p,n)
-				if((abs(id)==3)||(abs(id)==33)){	
+				if(abs(id)==3){	
 					double ram=random(1000)/1000.00;
 					if(ram<0.25){
 						energy=sqrt(px*px+py*py+pz*pz+massp*massp);
 						thermalid[count] = 2212;
 						thermalEng[count] = energy;
 						thermalmass[count] = massp;
-
 						thermalpx[count] = px;
 						thermalpy[count] = py;
 						thermalpz[count] = pz;
@@ -306,7 +309,7 @@ int main( int argc, char* argv[])
 					}
 				}
 				//Lambda
-				if((abs(id)==4)||(abs(id)==44)){	
+				if(abs(id)==4){	
 					double ram=random(1000)/1000.00;
 					if(ram<0.5){
 						energy=sqrt(px*px+py*py+pz*pz+massLambda*massLambda);
@@ -340,8 +343,8 @@ int main( int argc, char* argv[])
 					}
 				}
 				//phi
-				if((abs(id)==5)||(abs(id)==55)){	
-	//				double ram=random(1000)/1000.00;
+				if(abs(id)==5){	
+					double ram=random(1000)/1000.00;
 						energy=sqrt(px*px+py*py+pz*pz+massphi*massphi);
 						thermalid[count] = 333;
 						thermalEng[count] = energy;
@@ -357,7 +360,7 @@ int main( int argc, char* argv[])
 						count++;
 				}
 				//Omega
-				if((abs(id)==6)||(abs(id)==66)){	
+				if(abs(id)==6){	
 					double ram=random(1000)/1000.00;
 					if(ram<0.5){
 						energy=sqrt(px*px+py*py+pz*pz+massOmega*massOmega);
