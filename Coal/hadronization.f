@@ -1,7 +1,7 @@
 C********************************************************************C
 C                                                                    ! 
 C     Originally Written by K. C. Han, R. J. Fries, and C.-M. Ko     C 
-C     Greatly improved by Wenbin Zhao, 1501110084@pku.edu.cn         !
+C     Improved by Wenbin Zhao, 1501110084@pku.edu.cn         !
 C     When you use this coalescence code, please cite these          C
 C      three papers:                                                 !
 C       W.~Zhao, etc. al.[arXiv:2103.14657 [hep-ph]].                C
@@ -3544,28 +3544,28 @@ C........ leading quarks ........................
  42         continue
          enddo
 !..... form half gluons ..................!added by wenbin 
-         if(nchg(i) .ne. 0 .and. Kq(i,1).ne.0 ) then
-              probgg = ran()!changed by wenbin
-              if(probgg.le. 0.50) then
-                 kg = kg + 1
-                 Ppt(kg,1) = Pq(i,1)*2.
-                 Ppt(kg,2) = Pq(i,2)*2.
-                 Ppt(kg,3) = Pq(i,3)*2.
-                 Ppt(kg,4) = Pq(i,4)*2.
-                 Xpt(kg,1) = (Xq(i,1)+Xq(i,1))/2.
-                 Xpt(kg,2) = (Xq(i,2)+Xq(i,2))/2.
-                 Xpt(kg,3) = (Xq(i,3)+Xq(i,3))/2.
-                 Xpt(kg,4) = (Xq(i,4)+Xq(i,4))/2.
-                 Kpt(kg) = 21 !Kq(i,2)
-                 qscale(kg)=rqscale(i)
-                 ndhg(kg) = 1
-                 nchg(i) = 0
-                 goto 41
-              else
-                 nchg(i) = 0
-                 goto 41
-              endif
-         endif
+!         if(nchg(i) .ne. 0 .and. Kq(i,1).ne.0 ) then
+!              probgg = ran()!changed by wenbin
+!              if(probgg.le. 0.50) then
+!                 kg = kg + 1
+!                 Ppt(kg,1) = Pq(i,1)*2.
+!                 Ppt(kg,2) = Pq(i,2)*2.
+!                 Ppt(kg,3) = Pq(i,3)*2.
+!                 Ppt(kg,4) = Pq(i,4)*2.
+!                 Xpt(kg,1) = (Xq(i,1)+Xq(i,1))/2.
+!                 Xpt(kg,2) = (Xq(i,2)+Xq(i,2))/2.
+!                 Xpt(kg,3) = (Xq(i,3)+Xq(i,3))/2.
+!                 Xpt(kg,4) = (Xq(i,4)+Xq(i,4))/2.
+!                 Kpt(kg) = 21 !Kq(i,2)
+!                 qscale(kg)=rqscale(i)
+!                 ndhg(kg) = 1
+!                 nchg(i) = 0
+!                 goto 41
+!              else
+!                 nchg(i) = 0
+!                 goto 41
+!              endif
+!         endif
 !...............................................
 
  41      continue
