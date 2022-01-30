@@ -18,6 +18,7 @@
 //      W.~Zhao, etc. al.[arXiv:2103.14657 [hep-ph]].                                               
 //      W.~Zhao, etc. al.Phys. Rev. Lett.125, (2020) no.7, 072301.
 //*****************************
+
 using namespace Pythia8;
 int searchmin(double*p, int *q,int*s,int len);
 int searchmax(double*p, int *q,int len);
@@ -38,8 +39,7 @@ string path2=string(argc[3]);
   cout << output_filename2 << endl;
   string ramdomseed_str = "Random:seed = "+random_str;
 
-//---------------------------------------------------------
-  ofstream output2(output_filename2.c_str());  //-----zhao
+  ofstream output2(output_filename2.c_str()); 
 
   if( ! output2.is_open() )
   {
@@ -47,90 +47,25 @@ string path2=string(argc[3]);
 	     << output_filename2 << endl;
 	return -1;
   }
-//------- parton input -----------------
   string ipput_filename2;
-  ipput_filename2 = path2+"jet_parton1.dat";// output files of final hadrons
+  ipput_filename2 = path2+"remnant_jet_parton.dat";// output files of final hadrons
 
   sprintf(infiles, ipput_filename2.c_str()); //input parton file 
   FILE* infile1;
   infile1 = fopen(infiles,"r");
 
-
-
-//---------------------------------------------------------	
-
-//  initialize_pty();
-
   Pythia pythia;
 
   pythia.readString("Random:setSeed = on");
-  pythia.readString("Random:seed = 0");  //92549 792 458 871
-  //pythia.readString(ramdomseed_str);  //92549 792 458 871
-  pythia.readString("Beams:eCM = 5020");//5020,2760 MeV
+  pythia.readString("Random:seed = 0");  
+  pythia.readString("Beams:eCM = 5020");
   pythia.readString("Beams:idA = 2212");
-  pythia.readString("Beams:idB = 2212"); //2212 is proton; 1000791970 for 197Au; 1000822080 for 208Pb;
+  pythia.readString("Beams:idB = 2212"); 
   // Standard settings
     pythia.readString("HardQCD:all = on");
-    //pythia.readString("PhaseSpace:pTHatMin = 4.");
-
-//  pythia.readString("PartonLevel:ISR = on");
-//  pythia.readString("PartonLevel:MPI = on");
-//  pythia.readString("PartonLevel:FSR = on");
-//  pythia.readString("PromptPhoton:all=on");
-//  pythia.readString("WeakSingleBoson:all=off");
-//  pythia.readString("WeakDoubleBoson:all=off");
-//  //pythia.readString("HardQCD:gg2ccbar = on");
-//  //pythia.readString("HardQCD:qqbar2ccbar = on");
-//  pythia.readString("PhaseSpace: pTHatMin = 4.");
-/*
-   pythia.readString("SoftQCD:centralDiffractive = on");
-   pythia.readString("SoftQCD:all = on");
-   pythia.readString("SoftQCD:inelastic = on");
-//  //pythia.readString("Charmonium:all = on");  // for calculating cross section of jpsi production
-  pythia.readString("PartonLevel:all = on"); // off to only get hard process partons
-  // Show initialization at INFO level
-
-
-  readString("Init:showProcesses = off");
-  readString("Init:showChangedSettings = off");
-  readString("Init:showMultipartonInteractions = off");
-  readString("Init:showChangedParticleData = off");
-
-
-  pythia.readString("Init:showProcesses = on");
-  pythia.readString("Init:showChangedSettings = on");
-  pythia.readString("Init:showMultipartonInteractions = on");
-  pythia.readString("Init:showChangedParticleData = on");
-  // No event record printout.
-  pythia.readString("Next:numberShowInfo = 0"); 
-  pythia.readString("Next:numberShowProcess = 0"); 
-  pythia.readString("Next:numberShowEvent = 0"); 
-
-  // Setup of diffractive framework.
-  pythia.readString("Diffraction:doHard = on");
-  pythia.readString("Diffraction:sampleType = 1");
-  pythia.readString("SigmaDiffractive:PomFlux = 5");
-  pythia.readString("PDF:PomSet = 6");
-  pythia.settings.parm("SigmaDiffractive:MBRalpha=1.08"); //2212 is proton; 1000791970 for 197Au; 1000822080 for 208Pb;
-
-
-  pythia.readString("Tune:pp = 5");
-  pythia.readString("JetMatching:exclusive  = 0");
-*/
-  // No event record printout.
      pythia.readString("Next:numberShowInfo = 0");
        pythia.readString("Next:numberShowProcess = 0");
          pythia.readString("Next:numberShowEvent = 0");
-  //
-  //         // Standard settings
-  //           pythia.readString("ProcessLevel:all = off");
-  
-               // Don't let pi0 decay
-                 //pythia.readString("111:mayDecay = off");
-  
-                   // Don't let any hadron decay
-                     //pythia.readString("HadronLevel:Decay = off");
- 
 
 pythia.readString("ColourReconnection:reconnect = on");
 pythia.readString("ColourReconnection:mode = 1");
@@ -144,33 +79,15 @@ pythia.readString("ColourReconnection:timeDilationMode = 3");    //allow reconne
 
 pythia.readString("ColourReconnection:timeDilationPar = 0.18");  //parameter used in causal interaction between strings (mode set above)(maybe try 0.073?)
 
-
-// Pythia8::Pythia pythia;                      // Declare generator.
-//Pythia8::Event& event = pythia.event;        // Convenient shorthand.
 pythia.readString("ProcessLevel:all = off"); // The trick!
- /*
+pythia.readString(" StringFlav:probStoUD=0.50");
 
-pythia.readString("ColourReconnection:reconnect = on");          //allowing color reconnections (should have been default on, but doing it here for clarity)
-pythia.readString("ColourReconnection:mode = 1");                //sets the color reconnection scheme to the 'new' QCD based scheme (TODO: make sure this is better than 2 - gluon move)
-pythia.readString("ColourReconnection:forceHadronLevelCR = on"); //allowing color reconnections for these constructed strings!
-//a few params for the QCD based color reconnection scheme are set below.
-pythia.readString("MultipartonInteractions:pT0Ref = 2.15");      //not sure if this is needed for this setup, but is part of the recommended 'default'
-pythia.readString("ColourReconnection:allowDoubleJunRem = off"); //default on - allows directly connected double junction systems to split into two strings
-pythia.readString("ColourReconnection:junctionCorrection = 1.15");
-pythia.readString("ColourReconnection:timeDilationMode = 3");    //allow reconnection if single pair of dipoles are in causal contact (maybe try 5 as well?)
-pythia.readString("ColourReconnection:timeDilationPar = 0.18");  //parameter used in causal interaction between strings (mode set above)(maybe try 0.073?)
- */
-        pythia.readString(" StringFlav:probStoUD=0.50");
-
-//        pythia.readString("StringFlav:BtoMratio=0.5");
+//pythia.readString("StringFlav:BtoMratio=0.5");
 pythia.readString("StringFlav:probQQtoQ=0.34");
 
-  pythia.readString("HadronLevel:Decay = off");
-// pythia.readString("HadronLevel:all = on");
-  pythia.readString("HadronLevel:Hadronize = on");
-//  pythia.settings.listChanged();
-  // reset variables must before the init() function
-	pythia.init();
+pythia.readString("HadronLevel:Decay = off");
+pythia.readString("HadronLevel:Hadronize = on");
+pythia.init();
 
 //wwww
 	double c_px, c_py ,c_pz, c_e, c_m,c_x,c_y,c_z,c_t;
@@ -189,19 +106,17 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 	double pxp[10000]={0.0},pyp[10000]={0.0},pzp[10000]={0.0},ep[10000]={0.0},ptp[10000]={0.0},xxp[10000]={0.0},yyp[10000]={0.0},zzp[10000]={0.0},ttp[10000]={0.0},phi[10000]={0.0},distance[10000]={0.0},dsting[100][1000]={0.0},Qscale[10000]={0.0};//,mass[10000]={0.0};
 	int nncol[10000]={0},aacol[10000]={0},index[10000]={0},qindex[10000]={0},aqindex[10000]={0},used[10000]={0},pair[1000]={0},apair[1000]={0},gindex[1000]={0},strings[100][1000]={0},Snum[1000]={0};//,nncol_mid[10000]={0},aacol_mid[10000]={0};
   // event loop
-  for(int iEvent=0; iEvent<n_event; iEvent++)      //comments: each event produce many particles, we should choose out charm
+  for(int iEvent=0; iEvent<n_event; iEvent++)
   {     
-//	pythia.event.empty();
-//	pythia.event.size()=0;
 	fscanf(infile1,"%d %d\n",&mid,&Npart);
-//	if(!pythia.next() ) continue;  // it means if generate fails, just continue and generate a new event pp collision 
 	if(Npart==0 ) {output2 << iEvent+1<<" "<<0 << endl;continue;} 
 	int Nquark=0;
 	int Naquark =0;
 	int Ngluon=0;
 	int Npair=0;
 	for (int ll=0;ll<Npart;ll++){
-                fscanf(infile1,"%d %d %lf %lf %lf %lf %lf %lf %lf %lf %lf\n",&mid,&c_id,&c_px,&c_py,&c_pz,&c_e,&c_x, &c_y, &c_z,&c_t,&Qmid);// format of input partons
+                fscanf(infile1,"%d %d %lf %lf %lf %lf %lf %lf %lf %lf\n",&mid,&c_id,&c_px,&c_py,&c_pz,&c_e,&c_x, &c_y, &c_z,&c_t);// format of input partons
+                Qmid = 0.0; // The scale for the parton shower. 
 		idpo[ll]=c_id;
 		if(c_id==21){gindex[Ngluon]=ll;Ngluon++;}
 		pxpo[ll]=c_px;
@@ -241,7 +156,6 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 		}
 
 // ****************** give the col and acol to gluon and quarks *********************//
-//	if(Npart>1){
 	int Nmax=101;
 	int add=0;
 	int jj,Nmin;
@@ -255,31 +169,23 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 		}
 	}
 	int excess=abs(Nquark-Naquark);
-	//cout<<"excess "<<excess<<endl;
 	if(excess>0){
-		//for(int ll=0;ll<excess;ll++){
-		//	used[ll+Npart]=0;
-		//}
-		int ppp=excess % 2;// cout<<"pppppppp "<<ppp<<endl;
-		int ecc=excess/2;   //cout<<"excessexcessexcess "<<excess<<" "<<ecc<<endl;
+		int ppp=excess % 2;
+		int ecc=excess/2;   
 		if(Nquark>Naquark){
 			if(ecc>0){
 			for(int gg=0;gg<ecc;gg++){
-				//cout<<"JJJJJJJ "<<idpo[qindex[Naquark+gg]]<<endl;
 				idpo[qindex[Nquark-1]]=-1*idpo[qindex[Nquark-1]];
 				aqindex[Naquark]=qindex[Nquark-1];
 				Naquark++;
 				Nquark--;
 			}
 			}
-			//for(int yy=0;yy<excess;yy++){
 			if(ppp==1){
 				idpo[Npart]=-3;pxpo[Npart]=0.20;pypo[Npart]=0.20;
 				pzpo[Npart]=10000.20;epo[Npart]=sqrt(pzpo[Npart]*pzpo[Npart]+pypo[Npart]*pypo[Npart]+pxpo[Npart]*pxpo[Npart]+0.5*0.5);
 				xxpo[Npart]=0.0;yypo[Npart]=0.0;zzpo[Npart]=0.0;ttpo[Npart]=0.0;phio[Npart]=atan2(pypo[Npart],pxpo[Npart]);index[Npart]=Npart; 
-				//double pmg=sqrt(pxpo[Npart]*pxpo[Npart]+pypo[Npart]*pypo[Npart]+pzpo[Npart]*pzpo[Npart]);
 				etao[Npart]=1.0;
-				//cout<<"etaooo "<<etao[Npart]<<endl;
 				used[Npart]=0;
 				aqindex[Naquark]=Npart;
 				Npart++;
@@ -289,7 +195,6 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 		if(Naquark>Nquark){
 			if(ecc>0){
 			for(int gg=0;gg<ecc;gg++){
-				//cout<<"IIIIIII "<<idpo[aqindex[Nquark+gg]]<<endl;
 				idpo[aqindex[Naquark-1]]=-1*idpo[aqindex[Naquark-1]];
 				qindex[Nquark]=aqindex[Naquark-1];
 				Nquark++;
@@ -297,13 +202,10 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 			}
 			}
 			if(ppp==1){
-			//for(int yy=0;yy<excess;yy++){
 				idpo[Npart]=3;pxpo[Npart]=0.20;pypo[Npart]=0.20;
 				pzpo[Npart]=100000.20;epo[Npart]=sqrt(pzpo[Npart]*pzpo[Npart]+pypo[Npart]*pypo[Npart]+pxpo[Npart]*pxpo[Npart]+0.5*0.5);
 				xxpo[Npart]=0.0;yypo[Npart]=0.0;zzpo[Npart]=0.0;ttpo[Npart]=0.0;phio[Npart]=atan2(pypo[Npart],pxpo[Npart]);index[Npart]=Npart;
-				//double pmg=sqrt(pxpo[Npart]*pxpo[Npart]+pypo[Npart]*pypo[Npart]+pzpo[Npart]*pzpo[Npart]);
 				etao[Npart]=1.0;
-				//cout<<"etaooo "<<etao[Npart]<<endl;
 				used[Npart]=0;
 				qindex[Nquark]=Npart;
 				Npart++;
@@ -349,12 +251,6 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 					}
 				}
 			}
-			//test 
-			cout<<" Naquark begin "<<Naquark<<endl;
-			for(int bb=0;bb<Naquark;bb++){
-				cout<<"PPPPt "<<ptpo[aqindex[bb]]<<endl;
-			}
-			cout<<" Naquark end "<<endl;
 			// Assign the pairs
 			for(int ii=0;ii<Naquark;ii++){
 				int used_q[1000]={0};
@@ -414,12 +310,6 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 					}
 				}
 			}
-			//test 
-			/*
-			for(int bb=0;bb<Nquark;bb++){
-				cout<<idpo[qindex[bb]]<<"PPPPt "<<ptpo[qindex[bb]]<<endl;
-			}
-			*/
 			// Assign the pairs
 			for(int ii=0;ii<Nquark;ii++){
 				int used_q[1000]={0};
@@ -469,7 +359,6 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 							mm = disquark[i][j];
 							qnm = i;
 							aqnm=j;
-							//cout<<"disddddd "<<i<<" "<<j<<" "<<disquark[i][j]<<endl;
 						}
 					}
 				}
@@ -491,7 +380,6 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 			for(int nn=0;nn<Npair;nn++){
 				double sphi=phio[gindex[pp]]-phio[pair[nn]];
 				if(abs(sphi)>PI){sphi=2*PI-abs(sphi);}
-				//cout<<"sphiiiiiiii "<<sphi<<" "<<phio[gindex[pp]]-phio[pair[nn]]<<endl;
 				double d1=sphi*sphi+(etao[gindex[pp]]-etao[pair[nn]])*(etao[gindex[pp]]-etao[pair[nn]]);
 				double sphi2=phio[gindex[pp]]-phio[apair[nn]];
 				if(abs(sphi2)>PI){sphi2=2*PI-abs(sphi2);}
@@ -541,7 +429,6 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 			aacol[I1]=Cocon; Cocon++;
 			nncol[I1]=Cocon; cout<< nncol[I1]<<" "<<idpo[I1]<<" ";cout<< aacol[I1]<<" "<<idpo[I1]<<endl;
 		}
-//		if(Snum[pp]>0)Cocon--;
 		nncol[apair[pp]]=0; aacol[apair[pp]]=Cocon;Cocon++;// anti-quark
 		cout<< nncol[apair[pp]]<<" "<<aacol[apair[pp]]<<" "<<idpo[apair[pp]]<<endl;
 	}
@@ -564,7 +451,7 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 		pythia.event.append(idpo[tt],62,nncol[tt],aacol[tt],pxpo[tt],pypo[tt],pzpo[tt],epo[tt],mass);
                 if(maxQ0<Qscale[tt])Qscale[tt]=maxQ0;
 		//if(minQ0>Qscale[tt])Qscale[tt]=minQ0;
-	//	pythia.event[tt].scale(Qscale[tt]);//QQ0 the initial scale of input partons 
+		//pythia.event[tt].scale(Qscale[tt]);//QQ0 the initial scale of input partons 
 		// get the center of mass of the strings and corresponding posistion 
 		m_str=m_str+mass;
 		x_str=x_str+mass*xxpo[tt];
@@ -582,14 +469,11 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 
 		if (pythia.event[i].isFinal() )
   		{
-//		if (pythia.event[i].isFinalPartonLevel()) {
 			c_id = pythia.event[i].id();
-//			if( abs(c_id) ==1||  abs(c_id) ==2|| abs(c_id) ==3 || abs(c_id) ==21)
 			if( (abs(c_id) !=22)&&(abs(c_id) !=11))
   			{
 				simble=simble+1;
 			}
-//		}
 		}
 	}
 
@@ -598,11 +482,8 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 		output2 << iEvent+1<<" "<<simble << endl;
 		for(int i=0; i<pythia.event.size();i++)
 		{
-//			if(abs(pythia.event[i].y())>y_cut) continue;  
 			if (pythia.event[i].isFinal() ){
-//			if (pythia.event[i].isFinalPartonLevel()) {
 				c_id = pythia.event[i].id();
-//				if( abs(c_id) ==1||  abs(c_id) ==2|| abs(c_id) ==3 || abs(c_id) ==21)
 				if( (abs(c_id) !=22)&&(abs(c_id) !=11))
   				{
 					cbar_meson_px = pythia.event[i].px();
@@ -615,11 +496,8 @@ pythia.readString("StringFlav:probQQtoQ=0.34");
 					y_hadron=y_str/m_str+hbarc*cbar_meson_py/hmt;
 					z_hadron=z_str/m_str+hbarc*cbar_meson_pz/hmt;
 					t_hadron=t_str/m_str+hbarc*cbar_meson_energy/hmt;
-//					if(pt>pt_cut){
 					output2 << c_id << " "<<cbar_meson_px<<"  "<<cbar_meson_py<<"  "<<cbar_meson_pz <<" "<<cbar_meson_energy << "  "<< pythia.event[i].m()<<" "<< x_hadron<<" "<<y_hadron<<" "<<z_hadron<<" "<<t_hadron<<" "<<endl;
-//					}
 				}
-//			}
 			}
 		}
 	}
