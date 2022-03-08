@@ -156,7 +156,7 @@ C..... Constants ................
       pi = 3.1415926535897932384626433832795
       hbarc = 0.197327          ! [ GeV*fm ]  
       hbarc2 = hbarc*hbarc
-      gmax = 1.50               ! [GeV] maximum mass of gluon ************* 
+      gmax = 2.0                ! [GeV] maximum mass of gluon ************* 
 
 !*****widths for recombination ****************** 
       Del = hbarc/sigma
@@ -338,13 +338,12 @@ C.......NOT count th-th-th recombination ...............
                   py3 = Pq(j2,2)
                   pz3 = Pq(j2,3)
 
-               ! write(*,*)"dfsdfdsf", px1,px2,px3
-                pt1square=px1*px1+py1*py1
-                pt2square=px2*px2+py2*py2
-                pt3square=px3*px3+py3*py3
-                if(pt1square.lt.pttcutsquare)goto 50
-                if(pt2square.lt.pttcutsquare)goto 50
-                if(pt3square.lt.pttcutsquare)goto 50
+                !pt1square=px1*px1+py1*py1
+                !pt2square=px2*px2+py2*py2
+                !pt3square=px3*px3+py3*py3
+                !if(pt1square.lt.pttcutsquare)goto 50
+                !if(pt2square.lt.pttcutsquare)goto 50
+                !if(pt3square.lt.pttcutsquare)goto 50
               
                 else www=1.0
                 endif
@@ -357,14 +356,6 @@ C.......NOT count ha-ha-ha recombination ...............
 
 !                  if(((Kq(i,1).eq.0).and.(Kq(j,1).eq.0)
 !     .                     .and.(Kq(j2,1).eq.0)))goto 50!don't consider  the th-th-th recombination !Wenbin
-
-                  ZKfactor1=1.0 !the factor to include the colour freedom !added by wenbin
-                  ZKfactor2=1.0 !the factor to include the colour freedom !added by wenbin
-                  ZKfactor3=1.0 !the factor to include the colour freedom !added by wenbin
-                  if (Kq(i,1).eq.0)ZKfactor1=3.0! modify to degeneracy !added by wenbin 2019.2.24
-                  if (Kq(j,1).eq.0)ZKfactor2=3.0! modify to degeneracy !added by wenbin 2019.2.24
-                  if (Kq(j2,1).eq.0)ZKfactor3=3.0! modify to degeneracy !added by wenbin 2019.2.24
-                  ZKfactor=ZKfactor1*ZKfactor2*ZKfactor3! modify to degeneracy !added by wenbin 2019.2.24
 
                   px3 = Pq(j2,1)
                   py3 = Pq(j2,2)
@@ -1348,23 +1339,16 @@ C...... Sigma -> Lambda + pi + pi .......................
 !****** recombination of quark and antiquark *******************
       else
 C........NOT consider th-th recombinatoin ......................               
-         if(Kq(i,1).eq.0.and.Kq(j,1).eq.0) 
-     .     then !goto 40 !changed by wenbin 2018.11.23 !TTT
-                pt1square=px1*px1+py1*py1
-                pt2square=px2*px2+py2*py2
-
-                if(pt1square.lt.pttcutsquare)goto 40
-                if(pt2square.lt.pttcutsquare)goto 40
-         endif
+!         if(Kq(i,1).eq.0.and.Kq(j,1).eq.0) 
+!     .     then !goto 40 !changed by wenbin 2018.11.23 !TTT
+!                pt1square=px1*px1+py1*py1
+!                pt2square=px2*px2+py2*py2
+!                if(pt1square.lt.pttcutsquare)goto 40
+!                if(pt2square.lt.pttcutsquare)goto 40
+!         endif
 C........NOT consider hard-hard recombinatoin ......................
 !         if(Kq(i,1)*Kq(j,1).gt.0) goto 40 !changed by wenbin2018.11.23 !TTT
 !*********momentum of the recombined mesons ****************
-         ZKfactor1=1.0 !the factor to include the colour freedom !added by wenbin
-         ZKfactor2=1.0 !the factor to include the colour freedom !added by wenbin
-!         if (Kq(i,1).eq.0.and.Kq(j,1).eq.0)ZKfactor=3.0*3.0! modify to degeneracy !added by wenbin 2019.2.24
-         if (Kq(i,1).eq.0)ZKfactor1=3.0! modify to degeneracy !added by wenbin 2019.2.24
-         if (Kq(j,1).eq.0)ZKfactor2=3.0! modify to degeneracy !added by wenbin 2019.2.24
-         ZKfactor=ZKfactor1*ZKfactor2  ! modify to degeneracy !added by wenbin 2019.2.24
  
 !         if((Kq(i,1).eq.0).and.(Kq(j,1).eq.0))goto 40!don't consider  the th-th-th recombination !Wenbin
 
