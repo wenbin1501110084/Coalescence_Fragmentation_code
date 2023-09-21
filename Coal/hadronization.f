@@ -423,22 +423,22 @@ C.........speed of the Lab frame in the center-of-mass frame ......
                   vy2Bcm = py2Bcm/e2Bcm
                   vz2Bcm = pz2Bcm/e2Bcm
 
-                  vx3Bcm = px1Bcm/e3Bcm
-                  vy3Bcm = py1Bcm/e3Bcm
-                  vz3Bcm = pz1Bcm/e3Bcm
+                  vx3Bcm = px3Bcm/e3Bcm
+                  vy3Bcm = py3Bcm/e3Bcm
+                  vz3Bcm = pz3Bcm/e3Bcm
                   
 !************Free propgation of earlier created quarks to the time latest produced one *********** 
                   tMaxBcm = max(t1Bcm,t2Bcm,t3Bcm)
                   x1nBcm = x1Bcm + vx1Bcm*(tMaxBcm - t1Bcm)
-                  y1nBcm = y1Bcm + vx1Bcm*(tMaxBcm - t1Bcm)
+                  y1nBcm = y1Bcm + vy1Bcm*(tMaxBcm - t1Bcm)
                   z1nBcm = z1Bcm + vz1Bcm*(tMaxBcm - t1Bcm)
                   
                   x2nBcm = x2Bcm + vx2Bcm*(tMaxBcm - t2Bcm)
-                  y2nBcm = y2Bcm + vx2Bcm*(tMaxBcm - t2Bcm)
+                  y2nBcm = y2Bcm + vy2Bcm*(tMaxBcm - t2Bcm)
                   z2nBcm = z2Bcm + vz2Bcm*(tMaxBcm - t2Bcm)
 
                   x3nBcm = x3Bcm + vx3Bcm*(tMaxBcm - t3Bcm)
-                  y3nBcm = y3Bcm + vx3Bcm*(tMaxBcm - t3Bcm)
+                  y3nBcm = y3Bcm + vy3Bcm*(tMaxBcm - t3Bcm)
                   z3nBcm = z3Bcm + vz3Bcm*(tMaxBcm - t3Bcm)
                   
 C......position of center of mass at the born time of the youngest parton ... 
