@@ -3,7 +3,7 @@ When you use this code, please cite our papers:
 
        W.~Zhao, etc. al.[arXiv:2103.14657 [hep-ph]].
        W.~Zhao, etc. al.Phys. Rev. Lett.125, (2020) no.7, 072301.
-       
+       Y.~Wang, W.~Zhao and H.~Song [arXiv:2401.00913 [nucl-th]].
 ######### Coalescence code: #############
 
 The format for the input thermal parton for coalescence is:

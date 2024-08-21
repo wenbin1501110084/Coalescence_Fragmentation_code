@@ -146,7 +146,7 @@ int main(int argv, char* argc[])
             if ((idpo[ll]<=5)&((idpo[ll])>0)) {
                 qindex[Nquark]=ll;Nquark++;
             }
-            if ((idpo[ll]>-5)&((idpo[ll])<0)) {
+            if ((idpo[ll]>=-5)&((idpo[ll])<0)) {
                 aqindex[Naquark]=ll;Naquark++;
             }
         }
