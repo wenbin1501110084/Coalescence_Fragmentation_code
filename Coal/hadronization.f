@@ -501,7 +501,7 @@ C..   print*, tBL
                   wig0BLz = exp(-ulambz)
                   wig0B = wig0BRx*wig0BRy*wig0BRz*wig0BLx*wig0BLy*
      .                 wig0BLz
-                  
+                  wig0B = wig0B/27.0 ! 1/27 is the color
 !.... Summing 3D w.w. functions up to nlev ......... 
                   wigR1x = wig0BRx
                   maxfB=10 !!Proton's highest excited state
@@ -534,7 +534,7 @@ C..   print*, tBL
                      wigR1x = wigR1x*urhox/(iRx+1)
                   enddo
 
-                  sumWigB=sumWigB/27.0 ! 1/27.0 added by wenbin color freedom 2019.03.10 
+                  sumWigB=sumWigB/27.0 ! 1/27.0 added by wenbin color freedom 2019.03.10;  *2 for the identifical two quarks
                   Wigpro =  sumWigB!changed by wenbin to account the color degeneracy 2019.02.24
 !                  Wigpro =  sumWigB*ZKfactor !changed by wenbin to account the color degeneracy 2019.02.24
 !                  Wiglambda = 0.!sumWigB !changed by wenbin 2018.11.13
@@ -827,7 +827,7 @@ C...... Sigma -> Lambda + pi + pi .......................
 !*************************************************************************
                   prob3 = ran()              
 !************Recombine proton ***********************************
-                  if(prob3.le.Wigpro.and.(abs(Kq(i,2)).le.2.and.
+                  if(prob3.le.Wigpro*2.0.and.(abs(Kq(i,2)).le.2.and.    ! Wigpro*2.0, 2.0 is for the two identifical quarks
      .                 abs(Kq(j,2)).le.2.and.abs(Kq(j2,2)).le.2)) then
                      
 !.........Direct N and Delta(N*) -> N + pi in the ground state ...........
